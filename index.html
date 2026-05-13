@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow Work Journal — Badass Alchemy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #050305;
+  --card-bg: rgba(30,15,35,0.7);
+  --card-border: rgba(207,174,220,0.18);
+  --lavender: #CFAEDC;
+  --pink-mid: #FA9CE0;
+  --hot-pink: #E14DA8;
+  --white: #ffffff;
+  --white-dim: rgba(255,255,255,0.88);
+  --white-muted: rgba(255,255,255,0.62);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--black);
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* GALAXY */
+.galaxy {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 70% 30%, rgba(100,40,120,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 70%, rgba(60,20,80,0.3) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(40,15,60,0.2) 0%, transparent 70%),
+    linear-gradient(160deg, #060408 0%, #0e0514 30%, #0a0318 60%, #060408 100%);
+}
+#starCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+
+.wrap { position:relative; z-index:1; max-width:940px; margin:0 auto; padding-bottom:4rem; }
+
+/* HERO */
+.hero {
+  text-align:center;
+  padding: 2.5rem 1.5rem 2rem;
+  border-bottom: 1px solid rgba(207,174,220,0.12);
+  position:relative;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
+  width:140px; height:1px;
+  background: linear-gradient(90deg, var(--hot-pink), var(--lavender));
+}
+.logo-img { width:200px; margin: 0 auto 1.5rem; display:block; }
+.badge {
+  display:inline-block;
+  font-family:'Montserrat',sans-serif;
+  font-size:10px; letter-spacing:3px; text-transform:uppercase; font-weight:600;
+  color:var(--pink-mid); border:1px solid rgba(250,156,224,0.3);
+  padding:5px 18px; border-radius:20px; margin-bottom:1.25rem;
+}
+.hero h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size: clamp(3.2rem, 9vw, 6rem);
+  font-weight:700; line-height:0.92; letter-spacing:-1px;
+  color:var(--white); text-transform:uppercase;
+}
+.hero h1 em {
+  font-style:italic; font-weight:300; display:block;
+  font-size:0.7em; letter-spacing:3px; text-transform:none;
+  background: linear-gradient(135deg, var(--lavender) 0%, var(--pink-mid) 60%, var(--hot-pink) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.hero p { font-size:13px; color:var(--white-muted); margin-top:1rem; letter-spacing:2.5px; text-transform:uppercase; font-weight:500; }
+
+/* TABS */
+.tabs-row {
+  display:flex; gap:0; padding:0 1.5rem;
+  overflow-x:auto; scrollbar-width:none;
+  border-bottom:1px solid rgba(207,174,220,0.1);
+}
+.tabs-row::-webkit-scrollbar { display:none; }
+.tab-btn {
+  font-family:'Montserrat',sans-serif;
+  font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600;
+  padding:15px 22px; border:none; border-bottom:2px solid transparent;
+  background:transparent; color:var(--white-muted); cursor:pointer; white-space:nowrap; transition:all 0.2s;
+}
+.tab-btn:hover { color:var(--lavender); }
+.tab-btn.active { color:var(--pink-mid); border-bottom-color:var(--hot-pink); }
+
+.tab-content { display:none; padding:2.5rem 1.5rem; }
+.tab-content.active { display:block; }
+
+/* LABELS */
+.section-label {
+  font-family:'Montserrat',sans-serif;
+  font-size:10px; letter-spacing:3px; text-transform:uppercase; font-weight:700;
+  color:var(--hot-pink); margin-bottom:1rem; display:block;
+}
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem; font-weight:600; color:var(--white);
+  margin-bottom:0.5rem; line-height:1.1;
+}
+
+/* CARDS */
+.start-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem; margin-bottom:2.5rem; }
+.info-card {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:12px; padding:1.75rem; position:relative; overflow:hidden;
+}
+.info-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--hot-pink), var(--pink-mid), var(--lavender));
+}
+.info-card .icon { font-size:24px; margin-bottom:1rem; }
+.info-card h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem; font-weight:600; color:var(--white); margin-bottom:0.6rem;
+}
+.info-card p { font-size:14px; color:var(--white-dim); line-height:1.8; font-weight:400; }
+
+.safety-box {
+  background:rgba(225,77,168,0.07); border:1px solid rgba(225,77,168,0.22);
+  border-left:3px solid var(--hot-pink); border-radius:8px; padding:1.25rem 1.5rem; margin-bottom:2rem;
+}
+.safety-box p { font-size:14px; color:var(--white-dim); line-height:1.9; }
+.safety-box strong { color:var(--pink-mid); font-weight:600; }
+
+/* WHEEL */
+.wheel-container { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1.5rem; }
+.wheel-item {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:10px; padding:1rem 1.1rem;
+}
+.wheel-item label { font-size:12px; color:var(--white-dim); display:block; margin-bottom:9px; font-weight:500; }
+.wheel-item input[type=range] { width:100%; cursor:pointer; accent-color:var(--hot-pink); }
+.wheel-score {
+  font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300;
+  background:linear-gradient(135deg,var(--pink-mid),var(--hot-pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  text-align:center; margin-top:5px;
+}
+
+.strategy-box {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-left:3px solid var(--lavender); border-radius:8px; padding:1.25rem 1.5rem;
+}
+.strategy-box h4 { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--lavender); margin-bottom:8px; font-weight:700; }
+.strategy-box p { font-size:14px; color:var(--white-dim); line-height:1.7; }
+
+/* PORTALS */
+.portals-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-bottom:2rem; }
+.portal-card {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:12px; padding:1.5rem; cursor:pointer; transition:all 0.25s;
+  position:relative; overflow:hidden;
+}
+.portal-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--hot-pink),var(--pink-mid),var(--lavender));
+}
+.portal-card:hover { border-color:rgba(250,156,224,0.4); transform:translateY(-2px); }
+.portal-card.selected { border-color:rgba(250,156,224,0.55); background:rgba(40,15,50,0.85); }
+.portal-emoji { font-size:26px; margin-bottom:0.7rem; }
+.portal-name { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; color:var(--white); margin-bottom:5px; }
+.portal-freq { font-size:10px; letter-spacing:2px; text-transform:uppercase; margin-bottom:9px; font-weight:600; }
+.portal-desc { font-size:13px; color:var(--white-dim); line-height:1.65; }
+
+/* PORTAL DETAIL */
+.portal-detail {
+  display:none; margin-top:1.75rem;
+  background:var(--card-bg); border:1px solid rgba(250,156,224,0.2);
+  border-radius:14px; padding:2rem;
+}
+.portal-detail.show { display:block; }
+.portal-detail h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem; font-weight:600; color:var(--white); margin-bottom:0.75rem;
+}
+.portal-detail .teaching {
+  font-size:14px; color:var(--white-dim); line-height:1.95; margin-bottom:1.75rem;
+  font-style:italic; border-left:2px solid var(--hot-pink); padding-left:1.1rem;
+}
+
+.prompt-block { margin-bottom:1.5rem; }
+.prompt-q {
+  font-size:15px; color:var(--white); line-height:1.6; font-weight:500;
+  padding:1rem 0 0.75rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.06);
+  position:relative;
+}
+.prompt-q::before { content:'✦'; font-size:8px; color:var(--hot-pink); position:absolute; left:0; top:1.1rem; }
+.prompt-answer {
+  width:100%; min-height:90px;
+  background:rgba(0,0,0,0.3); border:1px solid rgba(207,174,220,0.15);
+  border-radius:8px; padding:0.85rem 1rem; margin-top:0.6rem;
+  color:var(--white); font-family:'Montserrat',sans-serif; font-size:14px;
+  resize:vertical; line-height:1.75; outline:none; transition:border-color 0.2s; font-weight:400;
+}
+.prompt-answer:focus { border-color:rgba(250,156,224,0.45); }
+.prompt-answer::placeholder { color:rgba(255,255,255,0.3); }
+
+.ritual-box {
+  background:rgba(225,77,168,0.07); border:1px solid rgba(225,77,168,0.22);
+  border-radius:10px; padding:1.25rem 1.4rem; margin-top:1.5rem;
+}
+.ritual-box .ritual-label { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--hot-pink); margin-bottom:8px; font-weight:700; display:block; }
+.ritual-box p { font-size:14px; color:var(--white-dim); line-height:1.85; }
+
+.download-row { margin-top:1.75rem; display:flex; justify-content:flex-end; }
+.download-btn {
+  padding:12px 28px;
+  background:linear-gradient(135deg,rgba(225,77,168,0.2),rgba(250,156,224,0.15));
+  border:1px solid rgba(225,77,168,0.5); border-radius:9px;
+  color:var(--pink-mid); font-family:'Montserrat',sans-serif;
+  font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.download-btn:hover { background:linear-gradient(135deg,rgba(225,77,168,0.38),rgba(250,156,224,0.3)); }
+
+/* DAILY */
+.daily-spread { max-width:700px; margin:0 auto; }
+.spread-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.75rem; }
+.date-display { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:300; color:var(--white-muted); }
+.week-num { font-family:'Montserrat',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--pink-mid); font-weight:600; }
+.step-indicator { display:flex; gap:8px; margin-bottom:2.25rem; align-items:center; }
+.step-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.1); transition:all 0.3s; flex-shrink:0; }
+.step-dot.done { background:var(--hot-pink); }
+.step-dot.active { background:var(--lavender); width:26px; border-radius:4px; }
+.journal-step { display:none; }
+.journal-step.active { display:block; }
+.step-num { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--hot-pink); margin-bottom:7px; font-weight:700; }
+.step-q { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--white); margin-bottom:0.4rem; line-height:1.2; }
+.step-hint { font-size:14px; color:var(--white-muted); margin-bottom:1.2rem; font-style:italic; line-height:1.6; }
+.journal-textarea {
+  width:100%; min-height:140px;
+  background:rgba(0,0,0,0.35); border:1px solid rgba(207,174,220,0.15);
+  border-radius:10px; padding:1.1rem 1.2rem;
+  color:var(--white); font-family:'Montserrat',sans-serif; font-size:14px;
+  resize:vertical; line-height:1.8; outline:none; transition:border-color 0.2s; font-weight:400;
+}
+.journal-textarea:focus { border-color:rgba(250,156,224,0.5); }
+.journal-textarea::placeholder { color:rgba(255,255,255,0.3); }
+.somatic-row { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:1rem; }
+.somatic-tag {
+  font-family:'Montserrat',sans-serif;
+  font-size:12px; font-weight:500; padding:8px 16px;
+  background:rgba(30,15,35,0.7); border:1px solid rgba(207,174,220,0.18);
+  border-radius:20px; cursor:pointer; transition:all 0.2s; color:var(--white-muted);
+}
+.somatic-tag.selected { background:rgba(225,77,168,0.14); border-color:rgba(225,77,168,0.55); color:var(--pink-mid); }
+.btn-row { display:flex; gap:10px; margin-top:1.5rem; }
+.btn-primary {
+  flex:1; padding:14px;
+  background:linear-gradient(135deg,rgba(225,77,168,0.2),rgba(250,156,224,0.18));
+  border:1px solid rgba(225,77,168,0.5); color:var(--pink-mid);
+  font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700;
+  cursor:pointer; transition:all 0.2s; border-radius:9px;
+}
+.btn-primary:hover { background:linear-gradient(135deg,rgba(225,77,168,0.38),rgba(250,156,224,0.35)); }
+.btn-secondary {
+  padding:14px 22px; border-radius:9px; background:transparent;
+  border:1px solid rgba(255,255,255,0.1); color:var(--white-muted);
+  font-family:'Montserrat',sans-serif; font-size:11px; font-weight:500; cursor:pointer; transition:all 0.2s;
+}
+.btn-secondary:hover { border-color:rgba(207,174,220,0.3); color:var(--lavender); }
+.integration-box {
+  background:rgba(207,174,220,0.05); border:1px solid rgba(207,174,220,0.15);
+  border-radius:10px; padding:1.1rem 1.35rem; margin-top:1.25rem;
+}
+.integration-box .int-label { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--lavender); margin-bottom:7px; font-weight:700; display:block; }
+.integration-box p { font-size:14px; color:var(--white-dim); line-height:1.75; }
+
+/* AI ORACLE */
+.gen-form { max-width:640px; margin:0 auto; }
+.oracle-intro {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem; font-weight:300; font-style:italic; color:var(--white-dim);
+  margin-bottom:2rem; line-height:1.8;
+}
+.form-group { margin-bottom:1.5rem; }
+.form-label { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--hot-pink); margin-bottom:9px; display:block; font-weight:700; }
+.form-input, .form-select, .form-textarea {
+  width:100%; background:rgba(0,0,0,0.35); border:1px solid rgba(207,174,220,0.18);
+  border-radius:9px; padding:13px 16px;
+  color:var(--white); font-family:'Montserrat',sans-serif; font-size:14px;
+  outline:none; transition:border-color 0.2s; font-weight:400;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color:rgba(250,156,224,0.5); }
+.form-select { appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FA9CE0' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 15px center; padding-right:38px; }
+.form-select option { background:#1a0d1e; }
+.form-input::placeholder, .form-textarea::placeholder { color:rgba(255,255,255,0.3); }
+.form-textarea { resize:vertical; min-height:100px; line-height:1.7; }
+.checkbox-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.checkbox-item {
+  display:flex; align-items:center; gap:11px;
+  background:rgba(30,15,35,0.7); border:1px solid rgba(207,174,220,0.14);
+  border-radius:9px; padding:11px 14px; cursor:pointer; transition:all 0.2s;
+}
+.checkbox-item:hover { border-color:rgba(250,156,224,0.3); }
+.checkbox-item.checked { background:rgba(225,77,168,0.08); border-color:rgba(225,77,168,0.45); }
+.checkbox-item span { font-size:13px; color:var(--white-muted); font-weight:500; }
+.checkbox-item.checked span { color:var(--pink-mid); }
+.check-dot { width:17px; height:17px; border-radius:4px; border:1px solid rgba(207,174,220,0.28); flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+.checkbox-item.checked .check-dot { background:var(--hot-pink); border-color:var(--hot-pink); }
+.checkbox-item.checked .check-dot::after { content:'✓'; font-size:11px; color:#fff; font-weight:700; }
+.gen-btn {
+  width:100%; padding:17px;
+  background:linear-gradient(135deg,rgba(225,77,168,0.22),rgba(250,156,224,0.16));
+  border:1px solid rgba(225,77,168,0.55); border-radius:11px;
+  color:var(--pink-mid); font-family:'Montserrat',sans-serif;
+  font-size:11px; letter-spacing:3px; text-transform:uppercase; font-weight:700;
+  cursor:pointer; transition:all 0.25s; margin-top:0.5rem;
+}
+.gen-btn:hover { background:linear-gradient(135deg,rgba(225,77,168,0.4),rgba(250,156,224,0.32)); border-color:var(--hot-pink); }
+.gen-btn:disabled { opacity:0.4; cursor:not-allowed; }
+.gen-output {
+  margin-top:2rem; background:var(--card-bg);
+  border:1px solid rgba(250,156,224,0.22); border-radius:14px; padding:2rem; display:none;
+}
+.gen-output.show { display:block; }
+.gen-output-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--hot-pink); margin-bottom:1.1rem; font-weight:700; display:block; }
+.gen-output-text { font-size:14px; color:var(--white); line-height:2; white-space:pre-wrap; font-weight:400; }
+.loading-dots { display:flex; gap:8px; align-items:center; padding:0.5rem 0; }
+.loading-dots span { animation:blink 1.4s infinite; font-size:22px; color:var(--hot-pink); }
+.loading-dots span:nth-child(2) { animation-delay:0.2s; }
+.loading-dots span:nth-child(3) { animation-delay:0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0;} 40%{opacity:1;} }
+.copy-btn {
+  margin-top:1.25rem; padding:9px 20px;
+  background:transparent; border:1px solid rgba(207,174,220,0.22);
+  border-radius:7px; color:var(--white-muted);
+  font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+  cursor:pointer; transition:all 0.2s;
+}
+.copy-btn:hover { border-color:rgba(250,156,224,0.5); color:var(--pink-mid); }
+
+/* INTEGRATION */
+.review-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2.25rem; }
+.metric-card {
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:12px; padding:1.5rem; position:relative; overflow:hidden;
+}
+.metric-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--hot-pink),var(--lavender));
+}
+.metric-label { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:var(--white-muted); margin-bottom:0.7rem; font-weight:700; }
+.metric-value {
+  font-family:'Cormorant Garamond',serif; font-size:3.2rem; font-weight:300;
+  background:linear-gradient(135deg,var(--pink-mid),var(--hot-pink));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;
+}
+.metric-sub { font-size:12px; color:var(--white-muted); margin-top:6px; font-weight:400; }
+.action-item { display:flex; align-items:flex-start; gap:13px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+.action-check {
+  width:21px; height:21px; border-radius:5px; border:1px solid rgba(225,77,168,0.38);
+  flex-shrink:0; margin-top:1px; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.action-check.done { background:rgba(225,77,168,0.18); border-color:var(--hot-pink); }
+.action-check.done::after { content:'✓'; font-size:12px; color:var(--hot-pink); font-weight:700; }
+.action-text { font-size:14px; color:var(--white-dim); line-height:1.65; font-weight:400; }
+.action-text.done-text { text-decoration:line-through; opacity:0.35; }
+.closing-ritual {
+  background:linear-gradient(135deg,rgba(225,77,168,0.07),rgba(207,174,220,0.07));
+  border:1px solid rgba(250,156,224,0.2); border-radius:14px; padding:2.25rem;
+  margin-top:2rem; text-align:center;
+}
+.closing-ritual .ritual-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--hot-pink); margin-bottom:1rem; font-weight:700; display:block; }
+.closing-ritual p {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem; color:var(--white-dim); line-height:1.85; font-style:italic; font-weight:300;
+}
+.closing-ritual strong {
+  background:linear-gradient(135deg,var(--lavender),var(--pink-mid));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  font-style:normal; font-weight:600;
+}
+</style>
+</head>
+<body>
+<div class="galaxy"></div>
+<canvas id="starCanvas"></canvas>
+
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <!-- Logo as inline SVG-recreated text logo approximation using the uploaded image as base64 -->
+  <div style="margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;width:220px;height:80px;">
+    <div style="text-align:center;line-height:1;">
+      <div style="font-family:'Montserrat',sans-serif;font-size:28px;font-weight:700;letter-spacing:3px;color:#CFAEDC;text-transform:uppercase;">BADASS</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;font-style:italic;color:#ffffff;letter-spacing:1px;margin-top:-4px;">Alchemy</div>
+    </div>
+  </div>
+  <div class="badge">The Baddie Society · Shadow Work Journal</div>
+  <h1>Shadow Work<br><em>for the Badass Within</em></h1>
+  <p>Soft life. Savage execution.</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs-row">
+  <button class="tab-btn active" onclick="showTab('start',this)">Start Here</button>
+  <button class="tab-btn" onclick="showTab('portals',this)">The Portals</button>
+  <button class="tab-btn" onclick="showTab('daily',this)">Daily Practice</button>
+  <button class="tab-btn" onclick="showTab('generate',this)">AI Oracle</button>
+  <button class="tab-btn" onclick="showTab('integrate',this)">Integration</button>
+</div>
+
+<!-- START HERE -->
+<div id="tab-start" class="tab-content active">
+  <div class="safety-box">
+    <p><strong>Before you begin —</strong> Shadow work is sacred inner work. This journal is a self-reflection tool, not a substitute for therapy. If intense emotions arise, please pause and seek support from a licensed professional. Your pace is sacred. You are safe here.</p>
+  </div>
+
+  <span class="section-label">What is Shadow Work?</span>
+  <h2 class="section-title" style="margin-bottom:1.5rem;">The Parts of You Running Your Business</h2>
+  <div class="start-grid">
+    <div class="info-card">
+      <div class="icon">🌑</div>
+      <h3>The Shadow</h3>
+      <p>The parts of ourselves we hide, deny, or were taught to suppress. In business, they show up as money blocks, visibility fears, overgiving, and self-sabotage.</p>
+    </div>
+    <div class="info-card">
+      <div class="icon">💼</div>
+      <h3>Business as Mirror</h3>
+      <p>Your business reflects your inner world. Undercharging = not valuing yourself. Hiding = fear of judgment. Integration transforms both the inner and the outer result.</p>
+    </div>
+    <div class="info-card">
+      <div class="icon">✦</div>
+      <h3>The Journey</h3>
+      <p>8 weeks. 6 portals. A daily practice moving you from awareness → excavation → integration → aligned action. You will not be the same woman on the other side.</p>
+    </div>
+  </div>
+
+  <span class="section-label">Your Business Shadow Scan</span>
+  <h2 class="section-title" style="margin-bottom:1.25rem;">Rate Each Area 1–10</h2>
+  <div class="wheel-container" id="shadowWheel">
+    <div class="wheel-item"><label>Money & Receiving</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+    <div class="wheel-item"><label>Visibility & Being Seen</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+    <div class="wheel-item"><label>Authority & Leadership</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+    <div class="wheel-item"><label>Clients & Boundaries</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+    <div class="wheel-item"><label>Self-Worth & Rest</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+    <div class="wheel-item"><label>Comparison & Envy</label><input type="range" min="1" max="10" value="5" oninput="updateScore(this)"><div class="wheel-score">5</div></div>
+  </div>
+  <div class="strategy-box">
+    <h4>Your Shadow Scan Insight</h4>
+    <p id="scanInsight">Move the sliders to assess where you are today. Lower scores = deeper shadow work needed. Begin with your lowest score portal.</p>
+  </div>
+</div>
+
+<!-- PORTALS -->
+<div id="tab-portals" class="tab-content">
+  <span class="section-label">The Six Portals</span>
+  <h2 class="section-title" style="margin-bottom:0.4rem;">Select a Portal</h2>
+  <p style="font-size:14px;color:var(--white-muted);margin-bottom:1.75rem;line-height:1.7;">Choose your portal to reveal its prompts. Write your answers directly below each prompt, then download your responses as a Word document.</p>
+  <div class="portals-grid">
+    <div class="portal-card" onclick="selectPortal(this,'money')">
+      <div class="portal-emoji">💰</div>
+      <div class="portal-name">Money & Receiving</div>
+      <div class="portal-freq" style="color:#FA9CE0">396 Hz — Liberation from Fear</div>
+      <div class="portal-desc">Shame, scarcity, undercharging, and the unconscious vow to stay broke.</div>
+    </div>
+    <div class="portal-card" onclick="selectPortal(this,'visibility')">
+      <div class="portal-emoji">🔥</div>
+      <div class="portal-name">Visibility & Being Seen</div>
+      <div class="portal-freq" style="color:#CFAEDC">741 Hz — Expression & Clarity</div>
+      <div class="portal-desc">Fear of judgment, rejection, going live, and being misunderstood.</div>
+    </div>
+    <div class="portal-card" onclick="selectPortal(this,'authority')">
+      <div class="portal-emoji">👑</div>
+      <div class="portal-name">Authority & Leadership</div>
+      <div class="portal-freq" style="color:#E14DA8">528 Hz — Love & Transformation</div>
+      <div class="portal-desc">Fear of being "too much," power shadows, and the reluctant leader within.</div>
+    </div>
+    <div class="portal-card" onclick="selectPortal(this,'clients')">
+      <div class="portal-emoji">🤝</div>
+      <div class="portal-name">Clients & Boundaries</div>
+      <div class="portal-freq" style="color:#FA9CE0">432 Hz — Earth & Harmony</div>
+      <div class="portal-desc">People-pleasing, overgiving, the savior role, and learning to say no.</div>
+    </div>
+    <div class="portal-card" onclick="selectPortal(this,'worth')">
+      <div class="portal-emoji">💎</div>
+      <div class="portal-name">Self-Worth & Rest</div>
+      <div class="portal-freq" style="color:#CFAEDC">963 Hz — Divine Connection</div>
+      <div class="portal-desc">Worth tied to output, hustle shame, perfectionism, and burnout.</div>
+    </div>
+    <div class="portal-card" onclick="selectPortal(this,'comparison')">
+      <div class="portal-emoji">🌙</div>
+      <div class="portal-name">Comparison & Envy</div>
+      <div class="portal-freq" style="color:#E14DA8">639 Hz — Relationships</div>
+      <div class="portal-desc">Who triggers you online and what that mirror is really showing you.</div>
+    </div>
+  </div>
+  <div class="portal-detail" id="portalDetail"></div>
+</div>
+
+<!-- DAILY PRACTICE -->
+<div id="tab-daily" class="tab-content">
+  <div class="daily-spread">
+    <div class="spread-header">
+      <div class="date-display" id="dailyDate"></div>
+      <div class="week-num">Week 1 · Day 1</div>
+    </div>
+    <div class="step-indicator">
+      <div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div>
+      <div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+    </div>
+    <div class="journal-step active" id="jstep0">
+      <div class="step-num">Step 1 of 7 · Trigger</div>
+      <div class="step-q">What activated you in your business today?</div>
+      <div class="step-hint">A client interaction, a sales moment, seeing someone's post, avoiding a task…</div>
+      <textarea class="journal-textarea" placeholder="Today I felt activated when…"></textarea>
+    </div>
+    <div class="journal-step" id="jstep1">
+      <div class="step-num">Step 2 of 7 · Meaning</div>
+      <div class="step-q">What did you make it mean about you?</div>
+      <div class="step-hint">The story your mind immediately told about yourself…</div>
+      <textarea class="journal-textarea" placeholder="I made it mean that I am…"></textarea>
+    </div>
+    <div class="journal-step" id="jstep2">
+      <div class="step-num">Step 3 of 7 · Body</div>
+      <div class="step-q">Where did you feel it in your body?</div>
+      <div class="step-hint">Select all that apply, then describe below.</div>
+      <div class="somatic-row">
+        <div class="somatic-tag" onclick="toggleTag(this)">Chest tightness</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Throat closing</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Stomach drop</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Shoulders up</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Holding breath</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Heat rising</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Going numb</div>
+        <div class="somatic-tag" onclick="toggleTag(this)">Head spinning</div>
+      </div>
+      <textarea class="journal-textarea" placeholder="Describe the physical sensation…" style="min-height:100px;"></textarea>
+    </div>
+    <div class="journal-step" id="jstep3">
+      <div class="step-num">Step 4 of 7 · Memory</div>
+      <div class="step-q">What is the earliest memory with this same feeling?</div>
+      <div class="step-hint">Let your body answer, not your logic mind. Take your time.</div>
+      <textarea class="journal-textarea" placeholder="I first felt this way when…"></textarea>
+    </div>
+    <div class="journal-step" id="jstep4">
+      <div class="step-num">Step 5 of 7 · Protection</div>
+      <div class="step-q">What is this shadow part trying to protect you from?</div>
+      <div class="step-hint">This part once kept you safe. It has a positive intention even if its methods are outdated.</div>
+      <textarea class="journal-textarea" placeholder="This part of me is trying to protect me from…"></textarea>
+    </div>
+    <div class="journal-step" id="jstep5">
+      <div class="step-num">Step 6 of 7 · Reframe</div>
+      <div class="step-q">What does your wiser self want this part to know?</div>
+      <div class="step-hint">Speak to this shadow with the compassion you'd offer your younger self.</div>
+      <textarea class="journal-textarea" placeholder="Thank you for protecting me. I want you to know that…"></textarea>
+    </div>
+    <div class="journal-step" id="jstep6">
+      <div class="step-num">Step 7 of 7 · Action</div>
+      <div class="step-q">One aligned business action you will still take today.</div>
+      <div class="step-hint">Shadow work is not an excuse to hide. What does your next move look like?</div>
+      <textarea class="journal-textarea" placeholder="Despite this activation, today I will…"></textarea>
+      <div class="integration-box" style="margin-top:1.25rem;">
+        <span class="int-label">Shadow → Strategy</span>
+        <p>After completing all 7 steps, visit the Integration tab to turn this insight into a concrete business shift for the week.</p>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="prevBtn" onclick="navStep(-1)" style="display:none;">← Back</button>
+      <button class="btn-primary" id="nextBtn" onclick="navStep(1)">Next step →</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI ORACLE -->
+<div id="tab-generate" class="tab-content">
+  <div class="gen-form">
+    <p class="oracle-intro">Tell the Oracle what you need. She'll generate custom shadow prompts, integration rituals, or a weekly plan — tailored to your exact business season.</p>
+    <div class="form-group">
+      <label class="form-label">Your name (optional)</label>
+      <input type="text" class="form-input" id="genName" placeholder="How the Oracle should address you…">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Which portal are you in?</label>
+      <select class="form-select" id="genPortal">
+        <option value="">Choose your portal…</option>
+        <option value="money">💰 Money & Receiving</option>
+        <option value="visibility">🔥 Visibility & Being Seen</option>
+        <option value="authority">👑 Authority & Leadership</option>
+        <option value="clients">🤝 Clients & Boundaries</option>
+        <option value="worth">💎 Self-Worth & Rest</option>
+        <option value="comparison">🌙 Comparison & Envy</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">What's alive in your business right now?</label>
+      <textarea class="form-textarea" id="genContext" placeholder="e.g. I just launched and no one bought. I raised my prices and lost a client. I can't show up consistently on Instagram…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">What would you like the Oracle to generate?</label>
+      <div class="checkbox-grid">
+        <div class="checkbox-item checked" onclick="toggleCheck(this)"><div class="check-dot"></div><span>5 deep shadow prompts</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><div class="check-dot"></div><span>Integration ritual</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><div class="check-dot"></div><span>Shadow → Strategy action</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><div class="check-dot"></div><span>Inner child dialogue</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><div class="check-dot"></div><span>Weekly journaling plan</span></div>
+        <div class="checkbox-item" onclick="toggleCheck(this)"><div class="check-dot"></div><span>Saboteur CEO dialogue</span></div>
+      </div>
+    </div>
+    <button class="gen-btn" id="genBtn" onclick="generatePrompts()">✦ Consult the Oracle ✦</button>
+    <div class="gen-output" id="genOutput">
+      <span class="gen-output-label">Your Sacred Business Prompts</span>
+      <div class="gen-output-text" id="genText"></div>
+      <button class="copy-btn" id="copyBtn" onclick="copyOutput()" style="display:none;">Copy to journal</button>
+    </div>
+  </div>
+</div>
+
+<!-- INTEGRATION -->
+<div id="tab-integrate" class="tab-content">
+  <span class="section-label">Weekly Integration Checkpoint</span>
+  <div class="review-grid">
+    <div class="metric-card">
+      <div class="metric-label">Days Practiced</div>
+      <div class="metric-value" id="dayCount">0</div>
+      <div class="metric-sub">of 7 this week</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Portals Visited</div>
+      <div class="metric-value" id="portalCount">0</div>
+      <div class="metric-sub">of 6 available</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Actions Completed</div>
+      <div class="metric-value" id="actionCount">0</div>
+      <div class="metric-sub">this week</div>
+    </div>
+  </div>
+  <span class="section-label">Shadow → Strategy this week</span>
+  <div class="strategy-box" style="margin-bottom:1.25rem;">
+    <h4>Recurring Pattern</h4>
+    <p style="margin-bottom:0.85rem;">What shadow theme showed up most this week?</p>
+    <textarea class="journal-textarea" placeholder="This week, my biggest recurring trigger was…" style="min-height:100px;"></textarea>
+  </div>
+  <div class="strategy-box" style="margin-bottom:2rem;">
+    <h4>Business Action Shifts</h4>
+    <p style="margin-bottom:0.85rem;">How will you apply this insight to marketing, sales, or your offers?</p>
+    <textarea class="journal-textarea" placeholder="Based on what I discovered, this week I will change…" style="min-height:100px;"></textarea>
+  </div>
+  <span class="section-label">Integration Action List</span>
+  <div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Complete your daily 7-step shadow spread</div></div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Send the email or post you've been avoiding</div></div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Have one aligned money conversation — raise a price, ask for a sale</div></div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Practice one somatic grounding ritual before business tasks</div></div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Say no to one misaligned inquiry or request</div></div>
+    <div class="action-item"><div class="action-check" onclick="toggleAction(this)"></div><div class="action-text">Take one visible leadership step — post, go live, share an opinion</div></div>
+  </div>
+  <div class="closing-ritual">
+    <span class="ritual-label">Closing Ritual</span>
+    <p>Take three deep breaths and say aloud:<br><strong>"I integrate what I discover. I act from wholeness, not wound.<br>Soft life. Savage execution."</strong></p>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+// STARS
+(function(){
+  const c = document.getElementById('starCanvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; draw(); }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    const cols=['rgba(255,255,255,','rgba(207,174,220,','rgba(250,156,224,','rgba(225,77,168,','rgba(91,141,238,'];
+    for(let i=0;i<320;i++){
+      const x=Math.random()*c.width, y=Math.random()*c.height, r=Math.random()*1.4;
+      const col=cols[Math.floor(Math.random()*cols.length)];
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=col+(0.15+Math.random()*0.65)+')'; ctx.fill();
+    }
+  }
+  window.addEventListener('resize',resize); resize();
+})();
+
+// TABS
+function showTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// SCAN
+function updateScore(input){
+  input.closest('.wheel-item').querySelector('.wheel-score').textContent=input.value;
+  const sliders=document.querySelectorAll('#shadowWheel input[type=range]');
+  const labels=['Money & Receiving','Visibility','Authority','Clients & Boundaries','Self-Worth','Comparison & Envy'];
+  let min=10,minL='';
+  sliders.forEach((s,i)=>{ if(parseInt(s.value)<min){min=parseInt(s.value);minL=labels[i];} });
+  document.getElementById('scanInsight').textContent=`Your deepest shadow work is in: ${minL} (score: ${min}). Begin with the ${minL} portal — this is where unconscious patterns are most actively limiting your income and visibility.`;
+}
+
+// PORTAL DATA
+const portalData={
+  money:{name:'Money & Receiving',emoji:'💰',
+    teaching:"Money shadows often root in childhood messages about worth, safety, and scarcity. In soul-led business, they surface as undercharging, guilt around wealth, avoiding your finances, or unconsciously capping your income before you've even made an offer.",
+    prompts:['What was the first message you received about money from your family?','If you raised your prices tomorrow, what fear immediately arises? Name it precisely.','Where in your business are you chronically undercharging? What does that protect you from?','Finish the sentence: People who make a lot of money are ___. Notice what surfaces.','Write a letter from your "broke" self to your "wealthy" self. What does she need to hear?','Where are you refusing to receive — compliments, help, payment, rest?','What would your business look like if money were easy and safe?'],
+    ritual:'Money Shame Release — Write one specific money shame on paper. Speak it aloud. Write a compassionate reframe. End with one real-world money action: send an invoice, raise one price, or open your banking app without flinching.'},
+  visibility:{name:'Visibility & Being Seen',emoji:'🔥',
+    teaching:"The fear of being seen is almost always the fear of being rejected, criticized, or misunderstood. There is often a deep terror of being 'too much' — too woo, too bold, too specific. The shadow hides you before anyone else can.",
+    prompts:['What is the worst thing that could happen if thousands of people saw your work?','Who do you imagine judging you when you go to post? Describe them specifically.','When did you first learn that being seen was dangerous? What happened?','What would you post if you knew no one who knew you IRL would see it?','Where are you "almost" visible — editing forever, saving to drafts, almost posting?','What does the fully-seen version of you look like? What is she doing?','What truth are you holding back that wants to be said?'],
+    ritual:'One Tiny Visibility Challenge — Post one piece of content today without editing it for more than 10 minutes. Then: hand on heart, breathe, and say: "Being seen is safe. My voice matters. I am allowed to take up space."'},
+  authority:{name:'Authority & Leadership',emoji:'👑',
+    teaching:"Many spiritual entrepreneurs fear their own authority. Raised to be humble or small, they resist claiming expertise, leading decisively, or charging for their gifts. The leadership shadow says: 'Who are you to lead? You don't have it all figured out.'",
+    prompts:['Where do you shrink in your business when you should be stepping forward?','What does the word "authority" feel like in your body? What stories does it carry?','Who in your past modeled power in a harmful way? How has that made you afraid of your own?','Where are you waiting to feel "ready enough" before claiming your expertise?','What would a truly self-expressed, full-power version of you do differently this week?','Write a 5-sentence leadership manifesto about how you choose to lead.','Where are you overexplaining, over-justifying, or asking for permission you don\'t need?'],
+    ritual:'Crown Activation — Stand tall. Say aloud: "I am qualified. I lead with love and authority. I do not shrink to make others comfortable." Then take one decisive business action you\'ve been stalling on.'},
+  clients:{name:'Clients & Boundaries',emoji:'🤝',
+    teaching:"The savior/rescuer shadow is epidemic in spiritual business. You became a coach or healer because you want to help — but when helping comes from an unhealed wound, it creates resentment, overgiving, and blurred boundaries. Your clients deserve a whole you, not a depleted one.",
+    prompts:['Is there a current client you feel resentment toward? What are you tolerating?','Where have you over-delivered beyond your offer — and said nothing?','What boundary do you need to set but haven\'t? What are you afraid will happen?','How do you feel when a client doesn\'t take your advice? What does it mean to you?','Where are you taking responsibility for results that belong to your client?','Write the email or conversation you\'ve been avoiding with a client.','What would your ideal client relationship look and feel like?'],
+    ritual:'New Boundary Script — Write one clear, compassionate boundary you\'ll communicate this week. Practice saying it aloud until it feels clean, not apologetic. Then send or say it.'},
+  worth:{name:'Self-Worth & Rest',emoji:'💎',
+    teaching:"In a hustle culture, rest feels like failure. The self-worth shadow ties your value to your output, your revenue, your content. 'I'm not working, therefore I am not enough.' Integration here is radical: you are allowed to rest and still be worthy of success.",
+    prompts:['How do you feel on a "low productivity" day? What story do you tell yourself?','What does your inner critic say when you rest or play?','Where are you delaying a launch or offer until it\'s "perfect"?','How much of your self-worth is tied to your revenue numbers? Be honest.','What would you give yourself permission to do if you knew you were inherently enough?','Design a week where you work 4 fewer hours. What would you protect? What would you drop?','Write a love letter to yourself that has nothing to do with what you\'ve accomplished.'],
+    ritual:'Sacred Rest Protocol — Choose one non-negotiable rest ritual this week. Not a productivity hack. Actual rest. Schedule it. Honor it. Notice what feelings arise, and journal them here.'},
+  comparison:{name:'Comparison & Envy',emoji:'🌙',
+    teaching:"Envy is sacred data. Who you compare yourself to online reveals what you desire most but haven't given yourself permission to claim. The shadow uses comparison as punishment. Integration uses it as a compass.",
+    prompts:['Who online makes you feel "less than" right now? Be specific and honest.','What specifically about their success triggers you — content, numbers, lifestyle, confidence?','Could you do what they do? What stops you from claiming it for yourself?','Where are you judging someone for something you secretly want to do yourself?','What desire is hiding inside this trigger? Name it as a goal instead of a wound.','What would change if you turned this envy into a concrete plan?','Write a note from Future You — who has already achieved the thing you currently envy.'],
+    ritual:'Envy Alchemy — Name your biggest trigger this week. Name the desire underneath it. Write it as a goal: "I desire ___." Identify one aligned action to move toward it. Envy becomes strategy.'}
+};
+
+let visitedPortals=new Set();
+function selectPortal(card,key){
+  document.querySelectorAll('.portal-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  visitedPortals.add(key);
+  document.getElementById('portalCount').textContent=visitedPortals.size;
+  const d=portalData[key];
+  const detail=document.getElementById('portalDetail');
+  let promptsHTML=d.prompts.map((p,i)=>`
+    <div class="prompt-block">
+      <div class="prompt-q">${p}</div>
+      <textarea class="prompt-answer" placeholder="Write your answer here…" data-portal="${key}" data-idx="${i}"></textarea>
+    </div>`).join('');
+  detail.innerHTML=`
+    <h3>${d.emoji} ${d.name}</h3>
+    <div class="teaching">${d.teaching}</div>
+    <span class="section-label">Shadow Prompts — Write Your Answers Below</span>
+    ${promptsHTML}
+    <div class="ritual-box" style="margin-top:1.5rem;">
+      <span class="ritual-label">Integration Ritual</span>
+      <p>${d.ritual}</p>
+    </div>
+    <div class="download-row">
+      <button class="download-btn" onclick="downloadAnswers('${key}')">⬇ Download My Answers (.doc)</button>
+    </div>`;
+  detail.classList.add('show');
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function downloadAnswers(key){
+  const d=portalData[key];
+  const textareas=document.querySelectorAll(`.prompt-answer[data-portal="${key}"]`);
+  let content=`BADASS ALCHEMY — Shadow Work Journal\n`;
+  content+=`Portal: ${d.emoji} ${d.name}\n`;
+  content+=`Date: ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}\n`;
+  content+=`${'─'.repeat(60)}\n\n`;
+  d.prompts.forEach((p,i)=>{
+    const ans=textareas[i]?.value?.trim()||'(no answer written)';
+    content+=`PROMPT ${i+1}:\n${p}\n\nMY ANSWER:\n${ans}\n\n${'─'.repeat(60)}\n\n`;
+  });
+  content+=`\n"I integrate what I discover. I act from wholeness, not wound.\nSoft life. Savage execution."\n— Badass Alchemy`;
+  const blob=new Blob([content],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`BadassAlchemy_${key}_shadow_work.doc`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// DAILY
+let currentStep=0;
+const totalSteps=7;
+function navStep(dir){
+  const steps=document.querySelectorAll('.journal-step');
+  const dots=document.querySelectorAll('.step-dot');
+  steps[currentStep].classList.remove('active');
+  dots[currentStep].classList.remove('active','done');
+  dots[currentStep].classList.add('done');
+  currentStep=Math.max(0,Math.min(totalSteps-1,currentStep+dir));
+  steps[currentStep].classList.add('active');
+  dots.forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i<currentStep) d.classList.add('done');
+    else if(i===currentStep) d.classList.add('active');
+  });
+  document.getElementById('prevBtn').style.display=currentStep>0?'block':'none';
+  document.getElementById('nextBtn').textContent=currentStep===totalSteps-1?'Complete ✦':'Next step →';
+  if(currentStep===totalSteps-1){
+    const dc=parseInt(document.getElementById('dayCount').textContent)||0;
+    document.getElementById('dayCount').textContent=dc+1;
+  }
+}
+
+function toggleTag(el){ el.classList.toggle('selected'); }
+function toggleCheck(el){ el.classList.toggle('checked'); }
+function toggleAction(check){
+  check.classList.toggle('done');
+  check.nextElementSibling.classList.toggle('done-text');
+  document.getElementById('actionCount').textContent=document.querySelectorAll('.action-check.done').length;
+}
+
+// AI ORACLE
+async function generatePrompts(){
+  const name=document.getElementById('genName').value.trim();
+  const portal=document.getElementById('genPortal').value;
+  const context=document.getElementById('genContext').value.trim();
+  const checked=[...document.querySelectorAll('.checkbox-item.checked span')].map(s=>s.textContent);
+
+  if(!portal&&!context){
+    alert('Please select a portal or describe what\'s alive in your business.');
+    return;
+  }
+
+  const btn=document.getElementById('genBtn');
+  const output=document.getElementById('genOutput');
+  const genText=document.getElementById('genText');
+  const copyBtn=document.getElementById('copyBtn');
+
+  btn.disabled=true;
+  output.classList.add('show');
+  genText.innerHTML='<div class="loading-dots"><span>✦</span><span>✦</span><span>✦</span></div>';
+  copyBtn.style.display='none';
+
+  const portalName=portal?(portalData[portal]?.name||portal):'general shadow work';
+  const addressing=name?`You are writing for ${name}, a spiritual entrepreneur.`:'You are writing for a spiritual entrepreneur.';
+  const requested=checked.length?checked.join(', '):'5 deep shadow work prompts';
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-calls':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are the Badass Alchemy Oracle — a spiritually grounded, psychologically precise shadow work guide for spiritual entrepreneurs. Your voice is warm, direct, and unflinchingly honest — like a best friend who's also a therapist and a business strategist. You blend Jungian shadow work, somatic awareness, and real business strategy. You never coddle, never preach. You call women forward, never down. Brand mantra: "Soft life. Savage execution." Format your output with clear sections using ✦ as bullet markers. No markdown. Plain text only.`,
+        messages:[{role:'user',content:`${addressing} Portal: ${portalName}.\n\nWhat's alive in their business: ${context||'general shadow patterns in their spiritual entrepreneur journey'}\n\nGenerate the following (plain text, no markdown, use ✦ bullets): ${requested}\n\nBe psychologically precise. Name the shadow mechanism beneath the surface behavior. Connect inner work to outer business strategy. Make each prompt feel specific to this woman's situation. End with one grounding reminder in the brand voice.`}]
+      })
+    });
+
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err?.error?.message||`HTTP ${res.status}`);
+    }
+
+    const data=await res.json();
+    const text=data?.content?.[0]?.text;
+    if(text){
+      genText.textContent=text;
+      copyBtn.style.display='inline-block';
+    } else {
+      genText.textContent='The Oracle is resting. Please try again in a moment.';
+    }
+  } catch(e){
+    console.error('Oracle error:',e);
+    genText.textContent=`The Oracle encountered a disturbance: ${e.message}. Please try again.`;
+  }
+  btn.disabled=false;
+}
+
+function copyOutput(){
+  navigator.clipboard.writeText(document.getElementById('genText').textContent).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='Copied ✓';
+    setTimeout(()=>{ btn.textContent='Copy to journal'; },2000);
+  });
+}
+
+// Init
+document.getElementById('dailyDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+</script>
+</body>
+</html>
